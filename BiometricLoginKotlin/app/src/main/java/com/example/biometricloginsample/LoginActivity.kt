@@ -52,6 +52,9 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        updateApp(
+            ""
+        )
         binding.useBiometrics.setOnClickListener {
             if (ciphertextWrapper != null) {
                 showBiometricPromptForDecryption()
@@ -62,6 +65,7 @@ class LoginActivity : AppCompatActivity() {
         if (ciphertextWrapper == null) {
             setupForLoginWithPassword()
         }
+
     }
 
     /**
@@ -77,7 +81,11 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 // The user has already logged in, so proceed to the rest of the app
                 // this is a todo for you, the developer
-                updateApp(getString(R.string.already_signedin))
+                updateApp(
+                    "You successfully signed in using BIOMETRIC as: user " +
+                            "${SampleAppUser.username} , BIOMETRIC token for this user is ${SampleAppUser.fakeToken}"
+                )
+                // startActivity(Intent(this, MainActivity::class.java))
             }
         }
     }
@@ -113,8 +121,12 @@ class LoginActivity : AppCompatActivity() {
                 // the only reason we call this fakeToken is because we didn't really get it from
                 // the server. In your case, you will have gotten it from the server the first time
                 // and therefore, it's a real token.
-
-                updateApp(getString(R.string.already_signedin))
+                updateApp(
+                    "You successfully signed in using BIOMETRIC as: user " +
+                            "${SampleAppUser.username} with biometric token ${SampleAppUser.fakeToken}"
+                )
+                // startActivity(Intent(this, MainActivity::class.java))
+                // updateApp(getString(R.string.already_signedin))
             }
         }
     }
@@ -135,10 +147,18 @@ class LoginActivity : AppCompatActivity() {
         loginWithPasswordViewModel.loginResult.observe(this, Observer {
             val loginResult = it ?: return@Observer
             if (loginResult.success) {
-                updateApp(
-                    "You successfully signed up using password as: user " +
-                            "${SampleAppUser.username} with fake token ${SampleAppUser.fakeToken}"
-                )
+                if (SampleAppUser.username==null)
+                {
+                    updateApp(
+                        "Akun anda belum terdaftar. Harap mendaftarkan akun dengan biometric"
+                    )
+                }
+                else{
+                    updateApp(
+                        "You successfully signed in using password as: user " +
+                                "${SampleAppUser.username}"
+                    )
+                }
             }
         })
         binding.username.doAfterTextChanged {
